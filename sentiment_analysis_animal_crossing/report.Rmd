@@ -1,0 +1,52 @@
+---
+title: "Sentiment analysis for Animal Crossing user reviews"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  render = "normal_print", echo = TRUE, cache=TRUE, message=FALSE, warning=FALSE)
+
+options(width = 100)
+
+library(tidyverse)
+```
+
+> "Disclaimer: This report was written more of a practice for me than giving actual analytic insights"
+> 
+> --- humble beginner
+
+## About
+
+This report will look to provide insights using data exploration and machine learning models on a [tidytuesday's **Animal Crossing - New Horizons**](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-05-05) data set. 
+
+Its worth mentioning that I have never heard of Animal Crossing and I apologize if I had been ignoring. However, good news, after I am done with report, I would have topped up my knowledge about this. 
+
+In my own understanding Animal Crossing is game where it gives users the ability to participate in a life like simulation. Like comparable games like Minecraft, you are given tools and enviroments for you to freely explore. 
+
+Hence, like every product created for human consumption, this games allows for users to rate their experience. The title probably already spoiled it but you guessed it! We are going to look into the those user reviews and perform a sentiment analysis. 
+
+## Data
+
+We are going to use the `skimr` package to look at a comprehensive summary of the data
+
+```{r }
+
+library(skimr)
+
+user_reviews <- 
+  readr::read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/user_reviews.tsv")
+
+skim_tee(user_reviews, skim_fun = skim_without_charts)
+
+```
+
+This data set is pretty straightforward. We see that each observation (or row) represent a review made by a user. In total we have 2999 review with ach observation giving information about the 
+
+  - user_name: reviewer's username
+  - text: the review's commentary
+  - date: date of which the review was posted, looks like there's 2 months worth of reviews
+  - grade: numeric rating given by the user with a range from 0 to 10
+
+
+## Exploratory
