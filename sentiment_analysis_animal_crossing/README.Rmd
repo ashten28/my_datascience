@@ -154,6 +154,6 @@ Great, there's a good balance of ratings in both data sets.
 Next is data preprocessing. We will use `recipes` package for this, however since this project is text heavy, we will also use `textrecipes` package. 
 
 ```{r, include=FALSE}
-# rmarkdown::render(paste0(here::here(), '/sentiment_analysis_animal_crossing/report.Rmd'), output_file = paste0(here::here(),'/sentiment_analysis_animal_crossing/README.md'), output_format = c("github_document"))
+# rmarkdown::render(paste0(here::here(), '/sentiment_analysis_animal_crossing/report.Rmd'), output_format = c("github_document"))
 ```
 
