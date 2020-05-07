@@ -10,6 +10,32 @@ knitr::opts_chunk$set(
 options(width = 100)
 
 library(tidyverse)
+library(skimr)
+library(tidymodels)
+library(textrecipes)
+
+# define my pallete
+my_palette <-
+  c(darkgrey = "#575965", grey = "#868d99", lightgrey = "#e2e2e2", yellow = "#f5cc5a", 
+    white = "#fefefe", black = "#2e2528", black2 = "#0A0A0A", lighgrey2 = "#5b5b5b", green = "#3986A6")
+
+scales::show_col(my_palette)
+
+my_theme <-
+  theme_bw() +
+  theme(
+      plot.background = element_rect(fill = my_palette[[3]]),
+      panel.background = element_rect(fill= my_palette[[3]]),
+      axis.line.x = element_line(colour = my_palette[[2]]),
+      panel.border = element_blank(),
+      panel.grid = element_blank()
+  )
+
+theme_set(my_theme)
+
+update_geom_defaults("bar", list(fill = my_palette[9], colour = my_palette[9]))
+update_geom_defaults("col", list(fill = my_palette[9], colour = my_palette[9]))
+
 ```
 
 > "Disclaimer: This report was written more of a practice for me than giving actual analytic insights"
@@ -31,13 +57,10 @@ Hence, like every product created for human consumption, this games allows for u
 We are going to use the `skimr` package to look at a comprehensive summary of the data
 
 ```{r }
-
-library(skimr)
-
 user_reviews <- 
   readr::read_tsv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-05/user_reviews.tsv")
 
-skim_tee(user_reviews, skim_fun = skim_without_charts)
+skimr::skim_tee(user_reviews, skim_fun = skim_without_charts)
 
 ```
 
@@ -50,3 +73,87 @@ This data set is pretty straightforward. We see that each observation (or row) r
 
 
 ## Exploratory
+
+Lets look at the outcome's variable distribution:
+
+```{r fig.align='center'}
+
+user_reviews %>% 
+  count(grade) %>% 
+  ggplot(aes(x = grade, y = n)) +
+  geom_col()
+
+
+```
+
+Off the bat, the distribution of looks weird. Both tails are quite heavy. 
+
+However, lets give this some thought. These are review grades, hence ask yourself how often do you leave a review and when you do, why did you do it?
+
+Most answers would be they rarely leave grades and when they do its because of extreme events such as complains or over the top experience. Applying this logic, it make sense to see high density on either side of grade scale. 
+
+Looking at the distribution, it wont be wise to try a model grades directly, especially that this is my first time. Rather, if we can turn this into a classification problem where we split the grades in to bad or good rating. Let's say that a rating below 7 is bad. 
+
+```{r}
+
+reviews_parsed <-
+  user_reviews %>% 
+  mutate(
+    rating = case_when(
+      grade > 7 ~ "good",
+      TRUE ~ "bad"
+    )
+    )
+
+```
+
+We could do a lot more on explatory analysis, but my skills are still at its infancy (especially text mining). Hence, I think we have enough to move on to modeling. 
+
+## Modeling
+
+First, we will set a seed for reproducibilty. 
+
+Then we will split the reviews into a train set and test set using stratified sampling. We use stratified sampling so that we have balanced proportion of good and bad ratings in both data sets. 
+
+```{r}
+# set the seed for reproducibilty
+set.seed(123)
+
+# stratified sampling so that we have balanced proportion of good and bad ratings in both data sets
+review_split <- initial_split(reviews_parsed, strata = rating) 
+
+# extract training data
+review_train <- training(review_split)
+review_test <- testing(review_split)
+
+```
+
+Now that we have our train set and test set, let look at their proportions of ratings
+
+```{r fig.align = "center"}
+
+# check the rating count in train and test set
+review_train %>% 
+  count(rating) %>% 
+  mutate(prop = n / sum(n), split = "train") %>% 
+  bind_rows(
+    review_test %>% 
+      count(rating) %>% 
+      mutate(prop = n / sum(n), split = "test")
+  ) %>% 
+  select(split, rating, n, prop) %>% 
+  ggplot(aes(x = rating, y = prop)) +
+  geom_col() +
+  facet_wrap(split~.)
+
+```
+
+
+Great, there's a good balance of ratings in both data sets. 
+
+Next is data preprocessing. We will use `recipes` package for this, however since this project is text heavy, we will also use `textrecipes` package. 
+
+```{r, include=FALSE}
+# rmarkdown::render(paste0(here::here(), '/sentiment_analysis_animal_crossing/report.Rmd'), output_file = paste0(here::here(),'/sentiment_analysis_animal_crossing/README.md'))
+```
+

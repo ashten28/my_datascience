@@ -92,7 +92,7 @@ user_reviews %>%
   geom_col()
 ```
 
-<img src="C:\Users\MASSMA~1\DOCUME~1\Ashten\RPROJE~1\MY_DAT~1\SENTIM~1\README~1/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+<img src="report_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
 Off the bat, the distribution of looks weird. Both tails are quite
 heavy.
@@ -165,10 +165,6 @@ review_train %>%
   facet_wrap(split~.)
 ```
 
-<img src="C:\Users\MASSMA~1\DOCUME~1\Ashten\RPROJE~1\MY_DAT~1\SENTIM~1\README~1/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="report_files/figure-gfm/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 Great, there’s a good balance of ratings in both data sets.
-
-Next is data preprocessing. We will use `recipes` package for this,
-however since this project is text heavy, we will also use `textrecipes`
-package.
