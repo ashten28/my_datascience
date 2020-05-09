@@ -1,32 +1,32 @@
 Sentiment analysis for Animal Crossing user reviews
 ================
 
-> “This report is written based on [Julia
-> Silge](https://juliasilge.com/blog/animal-crossing/)’s blog. I try to
-> incorporate my own thought process.”
+> “This report is written based on [Julia Silge’
+> blog](https://juliasilge.com/blog/animal-crossing/)’. However, I also
+> attempt to incorporate my own thoughts and learnings as well.”
 > 
-> — humble beginner
+> \~ humble beginner
 
 ## About
 
 This report will look to provide insights using data exploration and
-machine learning models on a [tidytuesday’s **Animal Crossing - New
-Horizons**](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-05-05)
+machine learning on [tidytuesday’s Animal Crossing - New
+Horizons](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-05-05)
 data set.
 
-Its worth mentioning that I have never heard of Animal Crossing and I
-apologize if I had been ignoring. However, good news, after I am done
-with report, I would have topped up my knowledge about this.
+It’s worth mentioning that I have never heard of Animal Crossing and I
+apologize if I sound ignorant. However, good news, after upon competion
+of this report, I would have up knowledge about this.
 
-In my own understanding Animal Crossing is game where it gives users the
-ability to participate in a life like simulation. Like comparable games
-like Minecraft, you are given tools and enviroments for you to freely
-explore.
+In my own understanding, Animal Crossing is game where it gives users
+the ability to participate in a life like simulation. You are given
+tools and enviroments for you to freely explore, comparable to likes of
+Minecraft and SIMS.
 
 Hence, like every product created for human consumption, this games
-allows for users to rate their experience. The title probably already
-spoiled it but you guessed it\! We are going to look into the those user
-reviews and perform a sentiment analysis.
+allows for users to rate their experience. The title probably gave it
+away but you guessed it\! We are going to look into the those user
+reviews and perform a **sentiment analysis**.
 
 ## Data
 
@@ -74,17 +74,18 @@ skimr::skim_tee(user_reviews, skim_fun = skim_without_charts)
 
 This data set is pretty straightforward. We see that each observation
 (or row) represent a review made by a user. In total we have 2999 review
-with ach observation giving information about the
+where each observation gives information about the
 
-  - user\_name: reviewer’s username
-  - text: the review’s commentary
-  - date: date of which the review was posted, looks like there’s 2
+  - **user\_name**: reviewer’s username
+  - **text**: the review’s commentary
+  - **date**: date of which the review was posted, looks like there’s 2
     months worth of reviews
-  - grade: numeric rating given by the user with a range from 0 to 10
+  - **grade**: numeric rating given by the user with a range from 0 to
+    10
 
 ## Exploratory
 
-Lets look at the outcome’s variable distribution:
+Lets look at the distriubtion of the outcome variable, **grade**:
 
 ``` r
 user_reviews %>% 
@@ -95,7 +96,7 @@ user_reviews %>%
 
 <img src="README_files/figure-gfm/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
 
-Off the bat, the distribution of looks weird. Both tails are quite
+Off the bat, the distribution looks peculiar. Both tails are quite
 heavy.
 
 However, lets give this some thought. These are review grades, hence ask
@@ -103,14 +104,13 @@ yourself how often do you leave a review and when you do, why did you do
 it?
 
 Most answers would be they rarely leave grades and when they do its
-because of extreme events such as complains or over the top experience.
-Applying this logic, it make sense to see high density on either side of
-grade scale.
-
-Looking at the distribution, it wont be wise to try a model grades
-directly, especially that this is my first time. Rather, if we can turn
-this into a classification problem where we split the grades in to bad
-or good rating. Let’s say that a rating below 7 is bad.
+because of extreme events such as complains or over the top
+satisfaction. Applying this logic, it make sense to see high density on
+either side of grade scale (i.e people often only rate 0 or 10. Looking
+at the distribution, it wont be wise to model the grades directly,
+especially that this is my first time. Rather it would be better if we
+can turn this into a classification problem where we split the grades
+into bad or good rating. Let’s say that a rating below 7 is bad.
 
 ``` r
 reviews_parsed <- user_reviews %>%
@@ -122,16 +122,16 @@ reviews_parsed <- user_reviews %>%
 ```
 
 We could do a lot more on explatory analysis, but my skills are still at
-its infancy (especially text mining). Hence, I think we have enough to
-move on to modeling.
+its infancy (especially text mining). Hence, I think we have just enough
+to move on to modeling.
 
 ## Modeling
 
 First, we will set a seed for reproducibilty.
 
 Then we will split the reviews into a train set and test set using
-stratified sampling. We use stratified sampling so that we have balanced
-proportion of good and bad ratings in both data sets.
+stratified sampling. We use stratified sampling so that we have a
+balanced proportion of good and bad ratings in both data sets.
 
 ``` r
 set.seed(123)
@@ -140,11 +140,10 @@ review_train <- training(review_split)
 review_test <- testing(review_split)
 ```
 
-Now that we have our train set and test set, let look at their
-proportions of ratings
+Now that we have our train set and test set, lets look at their
+proportions of rating:
 
 ``` r
-# check the rating count in train and test set
 review_train %>% 
   count(rating) %>% 
   mutate(prop = n / sum(n), split = "train") %>% 
@@ -164,19 +163,17 @@ review_train %>%
 Great, there’s a good balance of ratings in both data sets.
 
 Next is data preprocessing. We will use `recipes` package for this,
-however since this project is text heavy, we will also use `textrecipes`
-package.
+however since this project deal with text variables, we will also use
+`textrecipes` package.
 
 ### Data Preprocessing
 
 From what I read, I understand in this step is where data mining,
 feature engineering and imputation happens. Essentially, we are trying
-to make existing predictors better and relevant while also add new
+to make existing predictors better and relevant while also adding new
 variables that could add value.
 
 ``` r
-library(textrecipes)
-
 review_rec <- 
   recipe(rating ~ text, data = review_train) %>%
   step_tokenize(text) %>%
@@ -209,45 +206,55 @@ review_prep
     ## Centering and scaling for tfidf_text_0, tfidf_text_1, tfidf_text_10, ... [trained]
 
 We have a column called `text` in our data set. This column holds the
-review comments of ther user. AS a standlone, this column means almost
+review comments of the user. As its own, this column means almost
 nothing to a predictive model. The character strings that it holds are
-too long and unqiue. If we atttempt to use the column as it is, our
-models will most definitely turn out bad.
+too long and unqiue and if we atttempt to use the column as it is, our
+models will most definitely turn out bad or even fail.
 
 This is where data preprocessing comes in. Let’s try to bring out
 valueable column/predictors from the `text` column
 
-Lets go through what we did above one by one - step\_tokenize: the
+Lets go through what we did above one by one - step\_tokenize: The
 character string in our column `text` can be very long and most probably
 unique. It would make more sense to cut up the string into smaller
-strings and then we identify numerically if it exists in an
-oberservation. here we cut up the string into words. In other words, one
-token = one word. - step\_stopwords: we use this to remove any tokens
-that are stop words which give no or very low predicting power such as
-“is, it, there”. - step\_tokenfilter: if the string is very long, it
-likely that many token will be created. The longer the string, the
-greater the number of columns and hence the greater number of
-predictors. Unless you have loads of RAM to spare, it wont be a good
-idea to include too many predictors. Hence, in here we limit the number
-of tokens to 500. - step\_tf: tf stands for term frequency (counts).
-this measures how many times each token appears in the `text` column.
-For instance. when our weight\_scheme is set to binary, if the token
-“yes” appears once, then it returns a 1. If it appears twice, then it
-returns a 2. If there is any matching ones, then it returns a 0. Pretty
-neat I must say. But we can take this up a notch. - step\_tfidf: tfidf
-stands for “term frequency inverse document frequency”. It holds the
-same principle as above but it incorporates how common or rare the token
-is among all the observation in the returned values. - step\_normalize:
-this is also known as centering your data. What this does it takes the
-average of all the values and subtracts it from the data.
+strings and then identify numerically if it exists in an observation.
+Here we cut up the string into words. In other words, one token = one
+word.
+
+  - step\_stopwords: We use this to remove any tokens that are stop
+    words which give no or very low predicting power such as “is, it,
+    there”.
+
+  - step\_tokenfilter: If the string is very long, it is likely that too
+    many token will be created. The greater the number of tokens, the
+    greater number of predictors. Unless you have loads of RAM to spare,
+    it wont be a good idea to include too many predictors. Hence, in
+    here we limit the number of tokens (or in this case predictors) to
+    500.
+
+  - step\_tf: tf stands for term frequency (counts). This measures how
+    many times each token appears in the `text` column. For instance.
+    when our weight\_scheme is set to “binary”, if the token “amazing”
+    appears once, then it returns a 1. If it appears twice, then it
+    returns a 2. If there isn’t any matching ones, then it returns a 0.
+    Pretty neat I must say. But we can take this up a notch.
+
+  - step\_tfidf: tfidf stands for “term frequency, inverse document
+    frequency”. It holds the same principle as above but it incorporates
+    how common or rare the token is among all the observation in the
+    returned values.
+
+  - step\_normalize: This is also known as centering your data. What
+    this does it takes the average of all the values and subtracts it
+    from the data.
 
 Now we have our data read for modeling
 
 ### Modeling
 
-For our model, we are going to use a lasso regression using the `glmnet`
-package. I am quite there are other models we can use, however since
-this was suggested, I am going for this one.
+For our model, we are going to use a lasso regression from the `glmnet`
+package. I am quite sure there are other models we can use, however
+since this was suggested, I am going for this one.
 
 ``` r
 lasso_spec <- 
@@ -299,7 +306,24 @@ then produce a model with each of those penalties.
 
 ``` r
 lambda_grid <- grid_regular(penalty(), levels = 40)
+
+lambda_grid
 ```
+
+    ## # A tibble: 40 x 1
+    ##     penalty
+    ##       <dbl>
+    ##  1 1.00e-10
+    ##  2 1.80e-10
+    ##  3 3.26e-10
+    ##  4 5.88e-10
+    ##  5 1.06e- 9
+    ##  6 1.91e- 9
+    ##  7 3.46e- 9
+    ##  8 6.24e- 9
+    ##  9 1.13e- 8
+    ## 10 2.03e- 8
+    ## # ... with 30 more rows
 
 With the above, we have our grid with all the penalty values. Before we
 perform the tuning, we can perform resampling to get mutiple datasets.
@@ -341,7 +365,10 @@ Of course, to pick the best performing model, there must be some
 quantifiable metric that could give some indication. In a classification
 problem, the most common metric would be AUC aka area under the curve.
 Hence, this will be our main metric that we will use to decide the most
-suitable penalty value.
+suitable penalty value. Additionally, we will also look at postive
+predicitive values (ppv) and negative positive values (npv). This gives
+an independent indication of how well we predict postive values (grade =
+good) and how well we predict negative predictive values (grade = bad).
 
 This process may be time consuming, hence we can use parallel computing
 to speed things up.
@@ -396,12 +423,12 @@ lasso_grid %>%
 ![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 Here, we can see that AUC and PPV peaks but NPV doesn’t. We could add
-more features to
+more features to try and peak out NPV but sometimes it is what it.
 
 ### Choose the best model
 
 We will pick the best performing model based on AUC metric as our final
-model and fit it
+model and fit it.
 
 ``` r
 best_auc <- 
@@ -486,8 +513,8 @@ final_lasso
 Here’s our final model\!
 
 One of important insight that a model can provide is variable
-importance. Lets look the top 20 most important predictor (in this case
-word) that helps predict its a positive or negative rating.
+importance. Lets look the top 20 most important predictor (word) that
+helps predict if it has positive or negative rating.
 
 ``` r
 final_lasso %>%
@@ -509,5 +536,13 @@ final_lasso %>%
 
 ![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-I am no expert in Animal Crossing, but the words you see above gives an
-indication of user sentiments.
+From here you can see what words contributed to a positive and negative
+rating.
+
+For the bad grades, we see word like “greedy” and “sell” that could
+indicate that users are not to happy around the economizing of the game.
+
+FOr the good grades, we see word like “relaxing”, “fantastic” and
+“enjoyable” which are clear signs of satisfaction. However, the word
+“bombing” maybe of concern and worth a look back the data to find out
+what this is.
