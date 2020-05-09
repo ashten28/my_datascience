@@ -6,7 +6,7 @@ Most of the project below might be replication from the work of others. I have i
 
 *****
 
-### [Sentiment analysis for Animal Crossing user reviews](tree/master/sentiment_analysis_animal_crossing)
+### [Sentiment analysis for Animal Crossing user reviews](/sentiment_analysis_animal_crossing)
 
 Data: https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-05-05
 
