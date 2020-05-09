@@ -7,7 +7,10 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
-  render = "normal_print", echo = TRUE, cache=TRUE, message=FALSE, warning=FALSE)
+  echo = TRUE, cache=TRUE, message=FALSE, warning=FALSE,
+  dev.args=list(bg="transparent")
+)
+  
 
 options(width = 100)
 
@@ -27,8 +30,10 @@ scales::show_col(my_palette)
 my_theme <-
   theme_bw() +
   theme(
-      plot.background = element_rect(fill = paste0(my_palette[[3]], "60")),
-      panel.background = element_rect(fill= paste0(my_palette[[3]], "60")),
+      # plot.background  = element_rect(fill = paste0(my_palette[[3]], "60")),
+      # panel.background = element_rect(fill= paste0(my_palette[[3]], "60")),
+      panel.background = element_rect(fill = "transparent", colour = NA),
+      plot.background = element_rect(fill = "transparent", colour = NA),
       axis.line.x = element_line(colour = my_palette[[2]]),
       panel.border = element_blank(),
       panel.grid = element_blank()
@@ -41,8 +46,8 @@ update_geom_defaults("col", list(fill = my_palette[9], colour = my_palette[9]))
 
 ```
 
-> "This report is written based on [Julia Silge' blog](https://juliasilge.com/blog/animal-crossing/)'. 
-  However, I also attempt to incorporate my own thoughts and learnings as well."
+> This report is written based on [Julia Silge's blog](https://juliasilge.com/blog/animal-crossing/). 
+> However, I also attempt to incorporate my own thoughts and learnings as well."
 > 
 > ~ humble beginner
 

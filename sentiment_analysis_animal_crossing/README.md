@@ -1,9 +1,9 @@
 Sentiment analysis for Animal Crossing user reviews
 ================
 
-> “This report is written based on [Julia Silge’
-> blog](https://juliasilge.com/blog/animal-crossing/)’. However, I also
-> attempt to incorporate my own thoughts and learnings as well.”
+> This report is written based on [Julia Silge’s
+> blog](https://juliasilge.com/blog/animal-crossing/). However, I also
+> attempt to incorporate my own thoughts and learnings as well."
 > 
 > \~ humble beginner
 
@@ -268,11 +268,11 @@ lasso_wf <- workflow() %>%
 lasso_wf
 ```
 
-    ## == Workflow ===============================================================================================================================
+    ## == Workflow ===============================================================================================
     ## Preprocessor: Recipe
     ## Model: logistic_reg()
     ## 
-    ## -- Preprocessor ---------------------------------------------------------------------------------------------------------------------------
+    ## -- Preprocessor -------------------------------------------------------------------------------------------
     ## 5 Recipe Steps
     ## 
     ## * step_tokenize()
@@ -281,7 +281,7 @@ lasso_wf
     ## * step_tfidf()
     ## * step_normalize()
     ## 
-    ## -- Model ----------------------------------------------------------------------------------------------------------------------------------
+    ## -- Model --------------------------------------------------------------------------------------------------
     ## Logistic Regression Model Specification (classification)
     ## 
     ## Main Arguments:
@@ -442,11 +442,11 @@ final_lasso <-
 final_lasso
 ```
 
-    ## == Workflow [trained] =====================================================================================================================
+    ## == Workflow [trained] =====================================================================================
     ## Preprocessor: Recipe
     ## Model: logistic_reg()
     ## 
-    ## -- Preprocessor ---------------------------------------------------------------------------------------------------------------------------
+    ## -- Preprocessor -------------------------------------------------------------------------------------------
     ## 5 Recipe Steps
     ## 
     ## * step_tokenize()
@@ -455,7 +455,7 @@ final_lasso
     ## * step_tfidf()
     ## * step_normalize()
     ## 
-    ## -- Model ----------------------------------------------------------------------------------------------------------------------------------
+    ## -- Model --------------------------------------------------------------------------------------------------
     ## 
     ## Call:  glmnet::glmnet(x = as.matrix(x), y = y, family = "binomial",      alpha = ~1) 
     ## 
