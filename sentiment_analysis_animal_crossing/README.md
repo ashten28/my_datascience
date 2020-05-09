@@ -3,7 +3,7 @@ Sentiment analysis for Animal Crossing user reviews
 
 > This report is written based on [Julia Silge’s
 > blog](https://juliasilge.com/blog/animal-crossing/). However, I also
-> attempt to incorporate my own thoughts and learnings as well."
+> attempt to incorporate my own thoughts and learnings.
 > 
 > \~ humble beginner
 

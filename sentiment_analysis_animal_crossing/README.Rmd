@@ -47,7 +47,7 @@ update_geom_defaults("col", list(fill = my_palette[9], colour = my_palette[9]))
 ```
 
 > This report is written based on [Julia Silge's blog](https://juliasilge.com/blog/animal-crossing/). 
-> However, I also attempt to incorporate my own thoughts and learnings as well."
+> However, I also attempt to incorporate my own thoughts and learnings.
 > 
 > ~ humble beginner
 
